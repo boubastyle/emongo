@@ -24,7 +24,7 @@ main(_) ->
              Val1 = unicode:characters_to_binary(Val),
              BinVal = <<(byte_size(Val1)+1):32/little-signed, Val1/binary, 0:8>>,
              Size = size(BinVal) + 8,
-             Encoded = emongo_bson:encode([{<<"a">>, Val}]),
+             Encoded = emongo_bson:encode([{<<"a">>, list_to_binary(Val)}]),
              etap:is(Encoded, <<Size:32/little-unsigned, 2, 97, 0, BinVal/binary, 0>>, "data_string encodes ok"),
              etap:is(hd(emongo_bson:decode(Encoded)), [{<<"a">>, list_to_binary(Val)}], "data_string decodes ok"),
              ok

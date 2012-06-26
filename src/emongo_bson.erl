@@ -45,17 +45,6 @@ encode_key_value(Key, Val) when is_binary(Val) ->
 	Key1 = encode_key(Key),
     <<2, Key1/binary, 0, (byte_size(Val)+1):32/little-signed, Val/binary, 0:8>>;
 
-encode_key_value(Key, Val) when Val == [] orelse (is_list(Val) andalso length(Val) > 0 andalso is_integer(hd(Val))) ->
-	Key1 = encode_key(Key),
-	case unicode:characters_to_binary(Val) of
-		{error, Bin, RestData} ->
-			exit({cannot_convert_chars_to_binary, Val, Bin, RestData});
-		{incomplete, Bin1, Bin2} ->
-			exit({cannot_convert_chars_to_binary, Val, Bin1, Bin2});
-		Val1 ->
-			<<2, Key1/binary, 0, (byte_size(Val1)+1):32/little-signed, Val1/binary, 0:8>>
-	end;
-
 %% NESTED OBJECT
 encode_key_value(Key, {obj,[]}) ->  %% Empty obj had no representation, added {obj,PLIST} syntax to support
 	Key1 = encode_key(Key),
